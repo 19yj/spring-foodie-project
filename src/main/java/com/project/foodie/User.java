@@ -16,9 +16,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     private Long id;
+    private String userId;
     private String name;
     private String email;
     private String password;
+    private String phoneNumber;
 
     // default constructor (required for JPA)
     public User() {}
