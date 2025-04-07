@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/order-items")
+@RequestMapping("/api/order-items")
 public class OrderItemController {
 
     @Autowired
@@ -25,7 +25,7 @@ public class OrderItemController {
     }
 
     @DeleteMapping("{id}")
-    public void deleteOrderItem(@PathVariable long id) {
+    public void deleteOrderItem(@PathVariable Long id) {
         orderItemService.deleteOrderItem(id);
     }
 

@@ -15,7 +15,7 @@ public class OrderItemService {
         return orderItemRepository.save(orderItem);
     }
 
-    public Optional<OrderItem> findOrderItemById(long id) {
+    public Optional<OrderItem> findOrderItemById(Long id) {
         return orderItemRepository.findById(id);
     }
 

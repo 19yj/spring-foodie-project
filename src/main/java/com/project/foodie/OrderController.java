@@ -23,12 +23,12 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Order> getOrder(@PathVariable long id) {
+    public Optional<Order> getOrder(@PathVariable Long id) {
         return  orderService.getOrderById(id);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteOrder(@PathVariable long id) {
+    public void deleteOrder(@PathVariable Long id) {
         orderService.deleteOrder(id);
     }
 }

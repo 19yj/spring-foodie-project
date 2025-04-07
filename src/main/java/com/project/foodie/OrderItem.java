@@ -11,12 +11,12 @@ public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
-    private long id;
+    private Long id;
 
     // links each item to its parent order
     @ManyToOne
     @JoinColumn(name = "orderId")
-    // create a column named order_id in order_item table that store the foreign key pointing to id in the order table
+    // create a column named orderId in order_item table that store the foreign key pointing to id in the order table
 
     private Order order;
     private String foodId;

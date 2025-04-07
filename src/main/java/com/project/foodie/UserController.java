@@ -28,12 +28,12 @@ public class UserController {
 
     @GetMapping("/{id}")
                                 // @PathVariable: binds the id from the URL to the id parameter in the method
-    public Optional<User> getUser(@PathVariable long id) {
+    public Optional<User> getUser(@PathVariable Long id) {
         return userService.getUserById(id);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable long id) {
+    public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
     }
 }
