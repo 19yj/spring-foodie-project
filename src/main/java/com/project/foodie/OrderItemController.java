@@ -14,14 +14,14 @@ public class OrderItemController {
     @Autowired
     private OrderItemService orderItemService;
 
-    @GetMapping
-    public Optional<OrderItem> getOrderItems(@PathVariable Long id) {
-        return orderItemService.findOrderItemById(id);
-    }
-
     @PostMapping
     public OrderItem createOrderItem(@RequestBody OrderItem orderItem) {
         return orderItemService.saveOrderItem(orderItem);
+    }
+
+    @GetMapping
+    public Optional<OrderItem> getOrderItems(@PathVariable Long id) {
+        return orderItemService.findOrderItemById(id);
     }
 
     @DeleteMapping("{id}")
