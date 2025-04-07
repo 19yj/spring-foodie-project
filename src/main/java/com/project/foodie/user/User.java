@@ -17,10 +17,16 @@ public class User {
 
     private Long id;
     private String userId;
+
+    @Getter
+    private String username;
     private String name;
     private String email;
+
+    @Getter
     private String password;
     private String phoneNumber;
+    private String role;
 
     // default constructor (required for JPA)
     public User() {}
