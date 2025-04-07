@@ -1,8 +1,10 @@
-package com.project.foodie;
+package com.project.foodie.orders;
 
+import com.project.foodie.orderitem.OrderItem;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import com.project.foodie.user.User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

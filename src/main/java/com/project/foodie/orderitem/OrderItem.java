@@ -1,8 +1,10 @@
-package com.project.foodie;
+package com.project.foodie.orderitem;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import com.project.foodie.menu.Menu;
+import com.project.foodie.orders.Order;
 
 @Entity
 public class OrderItem {

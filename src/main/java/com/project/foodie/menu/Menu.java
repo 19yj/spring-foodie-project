@@ -1,4 +1,4 @@
-package com.project.foodie;
+package com.project.foodie.menu;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
