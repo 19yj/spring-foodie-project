@@ -24,6 +24,7 @@ public class Order {
     @JoinColumn(name = "userId")
     private User user;
     private String orderNumber;
+    private String tableNo;
     private double totalAmount;
     private String paymentMethod;
     private String status; // "pending", "confirmed", "delivered"
