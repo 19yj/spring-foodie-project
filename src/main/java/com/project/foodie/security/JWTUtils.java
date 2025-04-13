@@ -3,15 +3,27 @@ package com.project.foodie.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.impl.crypto.DefaultJwtSigner;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Date;
 
 @Component
 public class JWTUtils {
-    private String SECRET_KEY = System.getenv("JWT_SECRET_KEY");
-    private long EXPIRATION_TIME = 1000 * 60 * 60 * 10; // 10 hours
+    // generate secret key and encode into base64 string
+    SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+    String base64Key = Base64.getEncoder().encodeToString(key.getEncoded());
+
+    private final long EXPIRATION_TIME = 1000 * 60 * 60 * 10; // 10 hours
+
+    private SecretKey getSecretKey() {
+        byte[] decodedKey = Base64.getDecoder().decode(base64Key);
+        return new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA512");
+    }
 
     // generate a JWT token for user with their id, expire after 10 hours
     public String generateToken(Long userId) {
@@ -19,7 +31,7 @@ public class JWTUtils {
                 .setSubject(userId.toString())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
+                .signWith(getSecretKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
 
@@ -31,7 +43,7 @@ public class JWTUtils {
     // extract claims (expiration, subject) from token
     public Claims extractClaims(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(SECRET_KEY)  // set secret key for validation
+                .setSigningKey(getSecretKey())  // set secret key for validation
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
