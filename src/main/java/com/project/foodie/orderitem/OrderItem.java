@@ -7,9 +7,9 @@ import com.project.foodie.menu.Menu;
 import com.project.foodie.orders.Order;
 
 @Entity
+@Setter
+@Getter
 public class OrderItem {
-    @Setter
-    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 

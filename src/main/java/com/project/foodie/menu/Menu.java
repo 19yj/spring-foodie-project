@@ -8,9 +8,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
+@Setter
+@Getter
 public class Menu {
-    @Setter
-    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 

@@ -4,6 +4,7 @@ import com.project.foodie.security.JWTUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,11 +20,24 @@ public class UserController {
     private UserService userService;
 
     @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
     private JWTUtils jwtUtils;
 
     // registration endpoint
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody User user) {
+        System.out.println(user); // log user object to verify the data
+
+        // ensure all fields are populated
+        if (user.getUsername() == null || user.getPassword() == null || user.getEmail() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+        // hash user's password before saving
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+
         // save user to database
         User registeredUser = userService.saveUser(user);
         return ResponseEntity.ok(registeredUser);
@@ -32,13 +46,18 @@ public class UserController {
     // login endpoint
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody User user) {
+        System.out.println("Login request received");
+        System.out.println("Username : " + user.getUsername());
+        System.out.println("Password : " + user.getPassword());
         Optional<User> foundUser = userService.getUserByUsername(user.getUsername());
 
-        // if user is found and password matches
-        if (foundUser.isPresent() && foundUser.get().getPassword().equals(user.getPassword())) {
-            // generate a token using their id
-            String token = jwtUtils.generateToken(foundUser.get().getId());
-            return ResponseEntity.ok("Bearer " + token);
+        if (foundUser.isPresent()) {
+            User existingUser = foundUser.get();
+
+            if (bCryptPasswordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
+                String token = jwtUtils.generateToken(existingUser.getId());
+                return ResponseEntity.ok("Bearer " + token);
+            }
         }
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
