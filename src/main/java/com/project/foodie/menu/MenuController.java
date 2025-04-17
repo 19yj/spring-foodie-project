@@ -1,10 +1,10 @@
 package com.project.foodie.menu;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/menu")
@@ -18,18 +18,50 @@ public class MenuController {
     }
 
     @GetMapping
-    public List<Menu> getAllMenu() {
-        return menuService.getAllMenu();
+    public List<Menu> getAvailableMenu() {
+        return menuService.getAvailableMenu();
     }
 
     @GetMapping("/{id}")
-    public Optional<Menu> getMenu(@PathVariable Long id) {
-        return menuService.getMenuById(id);
+    public ResponseEntity<Menu> getMenu(@PathVariable Long id) {
+        return menuService.getMenuById(id)
+                .map(ResponseEntity::ok)  // returns 200 OK with the Menu object
+                .orElse(ResponseEntity.notFound().build());  // returns 404 Not Found
     }
 
     @DeleteMapping("/{id}")
-    public void deleteMenu(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteMenu(@PathVariable Long id) {
         menuService.deleteMenu(id);
+        return ResponseEntity.noContent().build();
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

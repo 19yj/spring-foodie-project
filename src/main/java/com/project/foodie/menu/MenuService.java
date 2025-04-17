@@ -15,8 +15,8 @@ public class MenuService {
         return menuRepository.save(menu);
     }
 
-    public List<Menu> getAllMenu() {
-        return menuRepository.findAll();
+    public List<Menu> getAvailableMenu() {
+        return menuRepository.findByAvailableTrue();
     }
 
     public Optional<Menu> getMenuById(Long id) {
