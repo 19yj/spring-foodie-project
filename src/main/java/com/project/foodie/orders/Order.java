@@ -21,8 +21,12 @@ public class Order {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "userId", referencedColumnName = "id", nullable = true)
     private User user;
+
+    @Column(name = "guest_id")
+    private String guestSessionId;
+
     private String orderNumber;
     private String tableNo;
     private double totalAmount;

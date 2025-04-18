@@ -25,6 +25,62 @@ function renderMenu() {
     });
 }
 
+function addToCart(itemId) {
+    const token = localStorage.getItem("token");
+
+    let payload = {
+        itemId: itemId,
+        quantity: 1
+    };
+
+    // user is logged in
+    if (token) {
+        fetch("/api/order-item", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        }).then(res => {
+            if (res.ok) {
+                alert("Item added to cart!");
+            } else {
+                alert("Failed to add item");
+            }
+        });
+    } else {
+        // guest user
+        const guestId = getGuestId(); // guest session identifier
+
+        // add guestSessionID to payload
+        payload.guestSessionId = guestId;
+
+        fetch("api/order-item/guest", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        }).then(res => {
+            if (res.ok) {
+                alert("Item added to cart!");
+            } else {
+                alert("Failed to add item");
+            }
+        });
+    }
+}
+
+function getGuestId() {
+    let guestId = localStorage.getItem("guestId");
+    if (!guestId) {
+        guestId = crypto.randomUUID();
+        localStorage.setItem("guestId", guestId);
+    }
+    return guestId;
+}
+
 function logout() {
     localStorage.removeItem("token");
     window.location.href = "login.html";
