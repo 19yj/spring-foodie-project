@@ -6,7 +6,7 @@ document.getElementById("register-form").addEventListener("submit", function(e) 
     const name = document.getElementById("name").value;
     const phoneNumber = document.getElementById("phone_number").value;
     const email = document.getElementById("email").value;
-    const role = "customer"; // or admin if have a dropdown
+    const role = "USER"; // or admin if have a dropdown
 
     fetch("http://localhost:8080/api/auth/register", {
         method: "POST",

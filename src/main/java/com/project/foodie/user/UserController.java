@@ -13,8 +13,6 @@ import java.util.Optional;
 @RestController // marks this class as a REST API controller
 @RequestMapping("/api/auth") // base URL for all the methods in this controller
 
-// @PostMapping, @GetMapping, @DeleteMapping: annotations for HTTP methods (POST, GET, DELETE)
-
 public class UserController {
     @Autowired
     private UserService userService;
@@ -49,13 +47,14 @@ public class UserController {
         System.out.println("Login request received");
         System.out.println("Username : " + user.getUsername());
         System.out.println("Password : " + user.getPassword());
+
         Optional<User> foundUser = userService.getUserByUsername(user.getUsername());
 
         if (foundUser.isPresent()) {
             User existingUser = foundUser.get();
 
             if (bCryptPasswordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
-                String token = jwtUtils.generateToken(existingUser.getId());
+                String token = jwtUtils.generateToken(existingUser.getUsername(), existingUser.getRole());
                 return ResponseEntity.ok("Bearer " + token);
             }
         }

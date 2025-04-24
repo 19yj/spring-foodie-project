@@ -16,7 +16,7 @@ public class Menu {
 
     private Long id;
 
-    private Long itemId;
+    private String itemId;
     private String itemName;
     private String description;
     private double price;

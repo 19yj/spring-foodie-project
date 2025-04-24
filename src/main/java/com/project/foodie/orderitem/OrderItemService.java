@@ -40,8 +40,8 @@ public class OrderItemService {
         orderItemRepository.deleteById(id);
     }
 
-    public OrderItem addOrderItemForUser(OrderItemRequest request, String userId) {
-        User user = userRepository.findById(Long.parseLong(userId))
+    public OrderItem addOrderItemForUser(OrderItemRequest request, String username) {
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // find or create pending order
@@ -79,7 +79,7 @@ public class OrderItemService {
     }
 
     private OrderItem createAndSaveOrderItem(Order order, OrderItemRequest request) {
-        Menu menu = menuRepository.findById(request.getItemId())
+        Menu menu = menuRepository.findById(request.getId())
                 .orElseThrow(() -> new RuntimeException("Menu not found"));
 
         OrderItem orderItem = new OrderItem();

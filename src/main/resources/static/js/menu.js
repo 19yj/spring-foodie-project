@@ -1,10 +1,34 @@
-const menuItems = [
-    { id: 1, name: "Burger", price: 12.99, image: "https://via.placeholder.com/150" },
-    { id: 2, name: "Pizza", price: 18.5, image: "https://via.placeholder.com/150" },
-    { id: 3, name: "Sushi", price: 22.0, image: "https://via.placeholder.com/150" },
-];
+document.addEventListener("DOMContentLoaded", () => {
+    fetchMenu();
+});
 
-function renderMenu() {
+function fetchMenu() {
+    fetch('/api/menu')
+        .then(response => {
+            console.log("API call made to /api/menu");
+            if (!response.ok) {
+                throw new Error(`HTTP status ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (!Array.isArray(data)) {
+                console.log("menuItems is not an array", data);
+                return;
+            }
+            renderMenu(data);
+        })
+        .catch(error => {
+            console.error("Error fetching menu: ", error);
+        });
+}
+
+function renderMenu(menuItems) {
+    if (!Array.isArray(menuItems)) {
+        console.error("menuItems is not an array", menuItems);
+        return;
+    }
+
     const container = document.getElementById('menu-container');
     container.innerHTML = "";
 
@@ -12,9 +36,9 @@ function renderMenu() {
         const card = `
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
-                    <img src="${item.image}" class="card-img-top" alt="${item.name}">
+                    <img src="${item.imageUrl}" class="card-img-top" alt="${item.itemName}">
                     <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">${item.name}</h5>
+                        <h5 class="card-title">${item.itemName}</h5>
                         <p class="card-text">RM ${item.price.toFixed(2)}</p>
                         <button class="btn btn-primary mt-auto" onclick="addToCart(${item.id})">Add to Cart</button>
                     </div>
@@ -29,17 +53,20 @@ function addToCart(itemId) {
     const token = localStorage.getItem("token");
 
     let payload = {
-        itemId: itemId,
+        id: itemId,
         quantity: 1
     };
 
+    console.log("Raw token from localStorage:", localStorage.getItem('token'));
+
     // user is logged in
     if (token) {
-        fetch("/api/order-item", {
+        fetch("/api/order-item/user", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
+                'Content-Type': 'application/json',
+                // "Authorization": `Bearer ${token}`
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
             },
             body: JSON.stringify(payload)
         }).then(res => {

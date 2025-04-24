@@ -1,5 +1,6 @@
 package com.project.foodie;
 
+import com.project.foodie.security.JWTAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,10 +11,19 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 public class AppConfig {
+
+    private final JWTAuthFilter jwtAuthFilter;
+
+    public AppConfig(JWTAuthFilter jwtAuthFilter) {
+        this.jwtAuthFilter = jwtAuthFilter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -29,11 +39,15 @@ public class AppConfig {
                                 "/css/**",
                                 "/js/**",
                                 "/images/**",
-                                "/api/auth/**"
+                                "/api/auth/**",
+                                "/api/menu/**",
+                                "/api/order-item/guest"  // allow guest endpoint
                         ).permitAll()
+                        .requestMatchers("/api/order-item/user").hasAuthority("ROLE_USER")
                         .anyRequest().authenticated()
                 )
-                .formLogin(AbstractHttpConfigurer::disable);
+                .formLogin(AbstractHttpConfigurer::disable)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

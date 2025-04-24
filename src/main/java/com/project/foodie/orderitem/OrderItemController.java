@@ -1,12 +1,13 @@
 package com.project.foodie.orderitem;
 
 import com.project.foodie.security.JWTUtils;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.Optional;
 
 @RestController
@@ -40,14 +41,32 @@ public class OrderItemController {
             @RequestBody OrderItemRequest request,
             @RequestHeader("Authorization") String authHeader) {
 
+        System.out.println("Full auth header: " + authHeader);
         String token = authHeader.replace("Bearer ", "");
+        System.out.println("Token after stripping Bearer: " + token);
 
         try {
-            String userId = jwtUtil.extractUserId(token);
+            // Add this debug block
+            try {
+                Claims claims = jwtUtil.extractClaims(token);
+                System.out.println("Token validated successfully");
+                System.out.println("Claims: " + claims);
+                System.out.println("Token expires at: " + claims.getExpiration());
+                System.out.println("Current time: " + new Date());
+                System.out.println("Is expired: " + claims.getExpiration().before(new Date()));
+            } catch (Exception e) {
+                System.out.println("Token validation failed: " + e.getMessage());
+                e.printStackTrace();
+            }
 
-            orderItemService.addOrderItemForUser(request, userId);
+            String username = jwtUtil.extractUsername(token);
+            System.out.println("Username from token: " + username);
+
+            orderItemService.addOrderItemForUser(request, username);
             return ResponseEntity.ok("Item added to cart");
         } catch (Exception e) {
+            System.out.println("Exception in addOrderItem: " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
