@@ -1,6 +1,7 @@
 package com.project.foodie;
 
 import com.project.foodie.security.JWTAuthFilter;
+import org.apache.catalina.filters.CorsFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,6 +13,8 @@ import org.springframework.security.config.annotation.web.configurers.CsrfConfig
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
@@ -36,14 +39,18 @@ public class AppConfig {
                                 "/login.html",
                                 "/register.html",
                                 "/menu.html",
+                                "/cart.html",
                                 "/css/**",
                                 "/js/**",
                                 "/images/**",
                                 "/api/auth/**",
                                 "/api/menu/**",
-                                "/api/order-item/guest"  // allow guest endpoint
+                                "/api/order-item/guest",
+                                "/api/cart/guest",
+                                "/api/cart/guest/**"
                         ).permitAll()
                         .requestMatchers("/api/order-item/user").hasAuthority("ROLE_USER")
+                        .requestMatchers("/api/cart/user").hasAuthority("ROLE_USER")
                         .anyRequest().authenticated()
                 )
                 .formLogin(AbstractHttpConfigurer::disable)
@@ -57,9 +64,20 @@ public class AppConfig {
         return config.getAuthenticationManager();
     }
 
-
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("http://localhost:8080"); // Your frontend origin
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter();
     }
 }
