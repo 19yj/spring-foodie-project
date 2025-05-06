@@ -1,5 +1,6 @@
 package com.project.foodie.orderitem;
 
+import com.project.foodie.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,6 +22,11 @@ public class OrderItem {
     @ManyToOne
     @JoinColumn(name = "menuId")
     private Menu menu;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = true)
+    private User user;
+    private String guestSessionId;
+
     private String itemId;
     private String itemName;
     private double price;

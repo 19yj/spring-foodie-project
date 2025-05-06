@@ -40,8 +40,8 @@ public class OrderItemService {
         orderItemRepository.deleteById(id);
     }
 
-    public OrderItem addOrderItemForUser(OrderItemRequest request, String username) {
-        User user = userRepository.findByUsername(username)
+    public OrderItem addOrderItemForUser(OrderItemRequest request, Long id) {
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // find or create pending order
@@ -91,7 +91,50 @@ public class OrderItemService {
         orderItem.setQuantity(request.getQuantity());
         orderItem.setTotalPrice(menu.getPrice() * request.getQuantity());
 
+        // set user/guest reference
+        if (order.getUser() != null) {
+            orderItem.setUser(order.getUser());
+        } else {
+            orderItem.setGuestSessionId(order.getGuestSessionId());
+        }
+
         return orderItemRepository.save(orderItem);
     }
 
+    // for logged-in users
+    public List<OrderItem> getOrderItemsByUserId(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return orderItemRepository.findByUserAndOrderIsNull(user);
+    }
+
+    // for guest users
+    public List<OrderItem> getOrderItemsByGuestSessionId(String guestSessionId) {
+        if (guestSessionId == null || guestSessionId.isEmpty()) {
+            throw new RuntimeException("Guest session ID not provided");
+        }
+        return orderItemRepository.findByGuestSessionIdAndOrderIsNull(guestSessionId);
+    }
+
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

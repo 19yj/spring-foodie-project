@@ -24,7 +24,6 @@ public class Order {
     @JoinColumn(name = "userId", referencedColumnName = "id", nullable = true)
     private User user;
 
-    @Column(name = "guest_id")
     private String guestSessionId;
 
     private String orderNumber;
