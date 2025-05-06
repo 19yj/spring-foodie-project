@@ -78,7 +78,7 @@ function addToCart(itemId) {
         });
     } else {
         // guest user
-        const guestId = getGuestId(); // guest session identifier
+        const guestId = getGuestId();
 
         // add guestSessionID to payload
         payload.guestSessionId = guestId;
@@ -99,18 +99,13 @@ function addToCart(itemId) {
     }
 }
 
-function getGuestId() {
-    let guestId = localStorage.getItem("guestId");
-    if (!guestId) {
-        guestId = crypto.randomUUID();
-        localStorage.setItem("guestId", guestId);
-    }
-    return guestId;
-}
-
-function logout() {
-    localStorage.removeItem("token");
-    window.location.href = "login.html";
-}
+// function getGuestId() {
+//     let guestId = localStorage.getItem("guestId");
+//     if (!guestId) {
+//         guestId = crypto.randomUUID();
+//         localStorage.setItem("guestId", guestId);
+//     }
+//     return guestId;
+// }
 
 document.addEventListener("DOMContentLoaded", renderMenu);
