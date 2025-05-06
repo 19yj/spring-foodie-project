@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,7 +28,6 @@ public class JWTUtils {
         byte[] decodedKey = Base64.getDecoder().decode(base64Key);
         System.out.println("Decoded Key Length: " + decodedKey.length);
         return new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA256");
-
     }
 
     // generate a JWT token for user with their username, expire after 10 hours
@@ -79,4 +79,29 @@ public class JWTUtils {
         return !claims.getExpiration().before(new Date());
     }
 
+    // helper method to extract username from request
+    public String extractUsernameFromRequest(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null && !authHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("Missing or invalid Authorization header");
+        }
+
+        String token = authHeader.substring(7);  // remove "Bearer"
+        return extractUsername(token);
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
